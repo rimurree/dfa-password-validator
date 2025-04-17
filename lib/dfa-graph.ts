@@ -356,6 +356,9 @@ export const createDFAGraph = () => {
       target,
       label: labels.join(', '),
       markerEnd: { type: MarkerType.ArrowClosed },
+      data: {
+        offset: 5,
+      },
     })
   )
 

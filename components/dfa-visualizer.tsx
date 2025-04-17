@@ -310,7 +310,7 @@ export default function DFAVisualizer() {
         <CardHeader>
           <CardTitle>Password Validator</CardTitle>
           <CardDescription>
-            Enter an 8-character password to test against the DFA
+            Enter an 8-character password to test against the NFA model.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -403,8 +403,8 @@ export default function DFAVisualizer() {
         </CardContent>
         <CardFooter>
           <div className="text-sm text-muted-foreground">
-            Requirements: 8 characters, at least one digit, one lowercase
-            letter, and one uppercase letter.
+            Requirements: exactly 8 characters, at least one digit, one ore more
+            lowercase letter, and one or more uppercase letter.
           </div>
         </CardFooter>
       </Card>
@@ -425,6 +425,22 @@ export default function DFAVisualizer() {
           >
             <Background />
             <Controls />
+            <Panel position="top-left">
+              <div className="bg-background p-2 rounded-md shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-4 h-4 rounded-full bg-black"></div>
+                  <span className="text-sm">a = a - z</span>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-4 h-4 rounded-full bg-black"></div>
+                  <span className="text-sm">A = A - Z</span>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-4 h-4 rounded-full bg-black"></div>
+                  <span className="text-sm">0 = 0 - 9</span>
+                </div>
+              </div>
+            </Panel>
             <Panel position="top-right">
               <div className="bg-background p-2 rounded-md shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
