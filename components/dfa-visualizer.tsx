@@ -102,9 +102,9 @@ export default function DFAVisualizer() {
 
   // Determine the character type
   const getCharType = useCallback((char: string) => {
-    if (/[0-9]/.test(char)) return '0'
-    if (/[a-z]/.test(char)) return 'a'
-    if (/[A-Z]/.test(char)) return 'A'
+    if (/[0-9]/.test(char)) return '[0-9]'
+    if (/[a-z]/.test(char)) return '[a-z]'
+    if (/[A-Z]/.test(char)) return '[A-Z]'
     return null
   }, [])
 
