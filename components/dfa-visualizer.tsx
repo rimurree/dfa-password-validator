@@ -33,6 +33,10 @@ import { useMobile } from '@/hooks/use-mobile'
 
 type CustomEdge = Omit<Edge, 'label'> & {
   label: string
+  data: {
+    offset: number
+    transitionLabels: string[]
+  }
 }
 // Register custom node types
 const nodeTypes = {
@@ -98,9 +102,9 @@ export default function DFAVisualizer() {
 
   // Determine the character type
   const getCharType = useCallback((char: string) => {
-    if (/[0-9]/.test(char)) return '0'
-    if (/[a-z]/.test(char)) return 'a'
-    if (/[A-Z]/.test(char)) return 'A'
+    if (/[0-9]/.test(char)) return '[0-9]'
+    if (/[a-z]/.test(char)) return '[a-z]'
+    if (/[A-Z]/.test(char)) return '[A-Z]'
     return null
   }, [])
 
@@ -444,8 +448,11 @@ export default function DFAVisualizer() {
             <Panel position="top-right">
               <div className="bg-background p-2 rounded-md shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm">q0 - Initial State</span>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
                   <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                  <span className="text-sm">Accepting State</span>
+                  <span className="text-sm">Final State</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-yellow-500"></div>

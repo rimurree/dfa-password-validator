@@ -1,339 +1,396 @@
 import { type Node, type Edge, MarkerType } from 'reactflow'
 
 export const createDFAGraph = () => {
-  const initialNodes: Node[] = Array.from({ length: 43 }, (_, i) => ({
-    id: `q${i}`,
-    type: 'stateNode',
-    position: { x: (i % 10) * 120, y: Math.floor(i / 10) * 120 },
-    data: {
-      label: `q${i}`,
-      originalLabel: `q${i}`,
-      isAccepting: i === 42, // This makes q42 the accepting state
-      isActive: false,
-      isRejecting: false,
-    },
-  }))
-
   const transitions: [number, [string, number][]][] = [
     [
       0,
       [
-        ['a', 7],
-        ['A', 19],
-        ['0', 1],
+        ['[a-z]', 7],
+        ['[A-Z]', 19],
+        ['[0-9]', 1],
       ],
     ],
     [
       1,
       [
-        ['a', 9],
-        ['A', 21],
-        ['0', 2],
+        ['[a-z]', 9],
+        ['[A-Z]', 21],
+        ['[0-9]', 2],
       ],
     ],
     [
       2,
       [
-        ['a', 11],
-        ['A', 23],
-        ['0', 3],
+        ['[a-z]', 11],
+        ['[A-Z]', 23],
+        ['[0-9]', 3],
       ],
     ],
     [
       3,
       [
-        ['a', 13],
-        ['A', 25],
-        ['0', 4],
+        ['[a-z]', 13],
+        ['[A-Z]', 25],
+        ['[0-9]', 4],
       ],
     ],
     [
       4,
       [
-        ['a', 15],
-        ['A', 27],
-        ['0', 5],
+        ['[a-z]', 15],
+        ['[A-Z]', 27],
+        ['[0-9]', 5],
       ],
     ],
     [
       5,
       [
-        ['a', 17],
-        ['A', 6],
-        ['0', 29],
+        ['[a-z]', 17],
+        ['[A-Z]', 6],
+        ['[0-9]', 29],
       ],
     ],
     [
       6,
       [
-        ['a', 18],
-        ['A', 30],
+        ['[a-z]', 18],
+        ['[A-Z]', 30],
       ],
     ],
     [
       7,
       [
-        ['a', 8],
-        ['A', 31],
-        ['0', 9],
+        ['[a-z]', 8],
+        ['[A-Z]', 31],
+        ['[0-9]', 9],
       ],
     ],
     [
       8,
       [
-        ['a', 10],
-        ['A', 32],
-        ['0', 11],
+        ['[a-z]', 10],
+        ['[A-Z]', 32],
+        ['[0-9]', 11],
       ],
     ],
     [
       9,
       [
-        ['a', 11],
-        ['A', 33],
-        ['0', 11],
+        ['[a-z]', 11],
+        ['[A-Z]', 33],
+        ['[0-9]', 11],
       ],
     ],
     [
       10,
       [
-        ['a', 12],
-        ['A', 34],
-        ['0', 13],
+        ['[a-z]', 12],
+        ['[A-Z]', 34],
+        ['[0-9]', 13],
       ],
     ],
     [
       11,
       [
-        ['a', 13],
-        ['A', 35],
-        ['0', 13],
+        ['[a-z]', 13],
+        ['[A-Z]', 35],
+        ['[0-9]', 13],
       ],
     ],
     [
       12,
       [
-        ['a', 14],
-        ['A', 36],
-        ['0', 15],
+        ['[a-z]', 14],
+        ['[A-Z]', 36],
+        ['[0-9]', 15],
       ],
     ],
     [
       13,
       [
-        ['a', 15],
-        ['A', 37],
-        ['0', 15],
+        ['[a-z]', 15],
+        ['[A-Z]', 37],
+        ['[0-9]', 15],
       ],
     ],
     [
       14,
       [
-        ['a', 16],
-        ['A', 38],
-        ['0', 17],
+        ['[a-z]', 16],
+        ['[A-Z]', 38],
+        ['[0-9]', 17],
       ],
     ],
     [
       15,
       [
-        ['a', 17],
-        ['A', 39],
-        ['0', 17],
+        ['[a-z]', 17],
+        ['[A-Z]', 39],
+        ['[0-9]', 17],
       ],
     ],
     [
       16,
       [
-        ['A', 40],
-        ['0', 18],
+        ['[A-Z]', 40],
+        ['[0-9]', 18],
       ],
     ],
     [
       17,
       [
-        ['a', 18],
-        ['A', 41],
-        ['0', 18],
+        ['[a-z]', 18],
+        ['[A-Z]', 41],
+        ['[0-9]', 18],
       ],
     ],
-    [18, [['A', 42]]],
+    [18, [['[A-Z]', 42]]],
     [
       19,
       [
-        ['a', 31],
-        ['A', 20],
-        ['0', 21],
+        ['[a-z]', 31],
+        ['[A-Z]', 20],
+        ['[0-9]', 21],
       ],
     ],
     [
       20,
       [
-        ['a', 32],
-        ['A', 22],
-        ['0', 23],
+        ['[a-z]', 32],
+        ['[A-Z]', 22],
+        ['[0-9]', 23],
       ],
     ],
     [
       21,
       [
-        ['a', 33],
-        ['A', 23],
-        ['0', 23],
+        ['[a-z]', 33],
+        ['[A-Z]', 23],
+        ['[0-9]', 23],
       ],
     ],
     [
       22,
       [
-        ['a', 34],
-        ['A', 24],
-        ['0', 25],
+        ['[a-z]', 34],
+        ['[A-Z]', 24],
+        ['[0-9]', 25],
       ],
     ],
     [
       23,
       [
-        ['a', 35],
-        ['A', 25],
-        ['0', 25],
+        ['[a-z]', 35],
+        ['[A-Z]', 25],
+        ['[0-9]', 25],
       ],
     ],
     [
       24,
       [
-        ['a', 36],
-        ['A', 26],
-        ['0', 27],
+        ['[a-z]', 36],
+        ['[A-Z]', 26],
+        ['[0-9]', 27],
       ],
     ],
     [
       25,
       [
-        ['a', 37],
-        ['A', 27],
-        ['0', 27],
+        ['[a-z]', 37],
+        ['[A-Z]', 27],
+        ['[0-9]', 27],
       ],
     ],
     [
       26,
       [
-        ['a', 38],
-        ['A', 28],
-        ['0', 29],
+        ['[a-z]', 38],
+        ['[A-Z]', 28],
+        ['[0-9]', 29],
       ],
     ],
     [
       27,
       [
-        ['a', 39],
-        ['A', 29],
-        ['0', 29],
+        ['[a-z]', 39],
+        ['[A-Z]', 29],
+        ['[0-9]', 29],
       ],
     ],
     [
       28,
       [
-        ['a', 40],
-        ['0', 30],
+        ['[a-z]', 40],
+        ['[0-9]', 30],
       ],
     ],
     [
       29,
       [
-        ['a', 41],
-        ['A', 30],
-        ['0', 30],
+        ['[a-z]', 41],
+        ['[A-Z]', 30],
+        ['[0-9]', 30],
       ],
     ],
-    [30, [['a', 42]]],
+    [30, [['[a-z]', 42]]],
     [
       31,
       [
-        ['a', 32],
-        ['A', 32],
-        ['0', 33],
+        ['[a-z]', 32],
+        ['[A-Z]', 32],
+        ['[0-9]', 33],
       ],
     ],
     [
       32,
       [
-        ['a', 34],
-        ['A', 34],
-        ['0', 35],
+        ['[a-z]', 34],
+        ['[A-Z]', 34],
+        ['[0-9]', 35],
       ],
     ],
     [
       33,
       [
-        ['a', 35],
-        ['A', 35],
-        ['0', 35],
+        ['[a-z]', 35],
+        ['[A-Z]', 35],
+        ['[0-9]', 35],
       ],
     ],
     [
       34,
       [
-        ['a', 36],
-        ['A', 36],
-        ['0', 37],
+        ['[a-z]', 36],
+        ['[A-Z]', 36],
+        ['[0-9]', 37],
       ],
     ],
     [
       35,
       [
-        ['a', 37],
-        ['A', 37],
-        ['0', 37],
+        ['[a-z]', 37],
+        ['[A-Z]', 37],
+        ['[0-9]', 37],
       ],
     ],
     [
       36,
       [
-        ['a', 38],
-        ['A', 38],
-        ['0', 39],
+        ['[a-z]', 38],
+        ['[A-Z]', 38],
+        ['[0-9]', 39],
       ],
     ],
     [
       37,
       [
-        ['a', 39],
-        ['A', 39],
-        ['0', 39],
+        ['[a-z]', 39],
+        ['[A-Z]', 39],
+        ['[0-9]', 39],
       ],
     ],
     [
       38,
       [
-        ['a', 40],
-        ['A', 40],
-        ['0', 41],
+        ['[a-z]', 40],
+        ['[A-Z]', 40],
+        ['[0-9]', 41],
       ],
     ],
     [
       39,
       [
-        ['a', 41],
-        ['A', 41],
-        ['0', 41],
+        ['[a-z]', 41],
+        ['[A-Z]', 41],
+        ['[0-9]', 41],
       ],
     ],
-    [40, [['0', 42]]],
+    [40, [['[0-9]', 42]]],
     [
       41,
       [
-        ['a', 42],
-        ['A', 42],
-        ['0', 42],
+        ['[a-z]', 42],
+        ['[A-Z]', 42],
+        ['[0-9]', 42],
       ],
     ],
   ]
 
+  // Build adjacency map
+  const adjacencyMap = new Map<number, Set<number>>()
+  transitions.forEach(([source, trans]) => {
+    if (!adjacencyMap.has(source)) adjacencyMap.set(source, new Set())
+    for (const [, target] of trans) {
+      adjacencyMap.get(source)!.add(target)
+    }
+  })
+
+  // Layout using BFS to determine layers
+  const visited = new Set<number>()
+  const nodePositions = new Map<number, { x: number; y: number }>()
+  const nodesPerLayer = new Map<number, number[]>() // depth -> node IDs
+
+  const queue: { id: number; depth: number }[] = [{ id: 0, depth: 0 }]
+  visited.add(0)
+
+  while (queue.length) {
+    const { id, depth } = queue.shift()!
+
+    // Add node to its layer
+    if (!nodesPerLayer.has(depth)) {
+      nodesPerLayer.set(depth, [])
+    }
+    nodesPerLayer.get(depth)!.push(id)
+
+    // Process neighbors
+    for (const neighbor of adjacencyMap.get(id) ?? []) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor)
+        queue.push({ id: neighbor, depth: depth + 1 })
+      }
+    }
+  }
+
+  // Assign positions centered per layer
+  nodesPerLayer.forEach((nodeIds, depth) => {
+    nodeIds.sort((a, b) => a - b) // Sort nodes for consistent layout
+    const count = nodeIds.length
+    const layerWidth = (count - 1) * 160 // Total width needed
+    const startX = -layerWidth / 2 // Center alignment
+
+    nodeIds.forEach((id, index) => {
+      const x = startX + index * 160
+      nodePositions.set(id, { x, y: depth * 160 })
+    })
+  })
+
+  // Fallback for disconnected nodes (keep existing code)
+  const fallbackStart = 1000
+  let fallbackOffset = 0
+  const initialNodes: Node[] = Array.from({ length: 43 }, (_, i) => {
+    const pos = nodePositions.get(i) ?? {
+      x: fallbackStart + fallbackOffset++ * 100,
+      y: fallbackStart,
+    }
+    return {
+      id: `q${i}`,
+      type: 'stateNode',
+      position: pos,
+      data: {
+        label: `q${i}`,
+        originalLabel: `q${i}`,
+        isAccepting: i === 42,
+        isActive: false,
+        isRejecting: false,
+      },
+    }
+  })
+
+  // Build edges
   const edgeMap = new Map<
     string,
     { source: string; target: string; labels: string[] }
   >()
-
   transitions.forEach(([source, trans]) => {
     trans.forEach(([label, target]) => {
       const key = `${source}-${target}`
