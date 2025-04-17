@@ -414,7 +414,7 @@ export default function DFAVisualizer() {
       </Card>
 
       <ReactFlowProvider>
-        <div className="h-full border rounded-md">
+        <div className="h-full border rounded-md bg-background">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -429,22 +429,6 @@ export default function DFAVisualizer() {
           >
             <Background />
             <Controls />
-            <Panel position="top-left">
-              <div className="bg-background p-2 rounded-md shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 rounded-full bg-black"></div>
-                  <span className="text-sm">a = a - z</span>
-                </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 rounded-full bg-black"></div>
-                  <span className="text-sm">A = A - Z</span>
-                </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 rounded-full bg-black"></div>
-                  <span className="text-sm">0 = 0 - 9</span>
-                </div>
-              </div>
-            </Panel>
             <Panel position="top-right">
               <div className="bg-background p-2 rounded-md shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
