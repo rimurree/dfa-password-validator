@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata: Metadata = {
   title: 'Password Validator',
@@ -14,8 +15,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html className='dark' lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider disableTransitionOnChange defaultTheme='system'>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

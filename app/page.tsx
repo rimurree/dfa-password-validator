@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-8 z-10">
       <div className="fixed inset-0 -z-50 pointer-events-none">
-        <div className="h-full w-full grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(20,1fr)]">
-          {Array.from({ length: 1600 }).map((_, i) => (
+        <div className="h-full w-full grid grid-cols-[repeat(20,1fr)]">
+          {Array.from({ length: 400 }).map((_, i) => (
             <div key={i} className="border border-gray-200/30" />
           ))}
         </div>
