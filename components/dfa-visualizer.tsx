@@ -334,7 +334,7 @@ export default function DFAVisualizer() {
             <CardHeader className="p-4 pb-2">
               <CardTitle>Password Validator</CardTitle>
               <CardDescription>
-                Enter an 8-character password to test against the DFA model.
+                Enter an 8-character password to test against the NFA model.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 pt-2">
