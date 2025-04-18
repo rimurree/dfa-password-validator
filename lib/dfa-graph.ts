@@ -379,6 +379,7 @@ export const createDFAGraph = () => {
       data: {
         label: `q${i}`,
         originalLabel: `q${i}`,
+        isStart: i === 0,
         isAccepting: i === 42,
         isActive: false,
         isRejecting: false,
@@ -412,6 +413,7 @@ export const createDFAGraph = () => {
       source,
       target,
       label: labels.join(', '),
+      type: 'straight',
       markerEnd: { type: MarkerType.ArrowClosed },
       data: {
         offset: 5,

@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import ReactFlow, {
-  Edge,
+  type Edge,
   Controls,
   Background,
   useNodesState,
@@ -44,7 +44,7 @@ const nodeTypes = {
 }
 
 export default function DFAVisualizer() {
-  const isMobile = useMobile()
+  const isMobile = useMobile?.() ?? false
   const [inputString, setInputString] = useState('')
   const [isValidating, setIsValidating] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(-1)
@@ -63,42 +63,48 @@ export default function DFAVisualizer() {
     useEdgesState<CustomEdge>(initialEdges)
 
   // Reset the validation state
-  const resetValidation = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
+  const resetValidation = useCallback(
+    (isValidating?: boolean) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
 
-    setIsValidating(false)
-    setCurrentIndex(-1)
-    setCurrentState('q0')
-    setIsAccepted(null)
-    setVisitedStates(['q0'])
-    setActiveTransitions([])
+      setIsValidating(false)
+      setCurrentIndex(-1)
+      setCurrentState('q0')
+      setIsAccepted(null)
+      setVisitedStates(['q0'])
+      setActiveTransitions([])
 
-    // Reset node styles
-    setNodes((nds) =>
-      nds.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          isActive: node.id === 'q0',
-          isAccepting: node.data.isAccepting,
-          isRejecting: false,
-          label: node.data.originalLabel,
-        },
-      }))
-    )
+      // Reset node styles
+      setNodes((nds) =>
+        nds.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            isActive: node.id === 'q0',
+            isAccepting: node.data.isAccepting,
+            isRejecting: false,
+            label: node.data.originalLabel,
+          },
+        }))
+      )
 
-    // Reset edge styles
-    setEdges((eds) =>
-      eds.map((edge) => ({
-        ...edge,
-        animated: false,
-        style: { stroke: '#888', strokeWidth: 1.5 },
-      }))
-    )
-  }, [setNodes, setEdges])
+      // Reset edge styles
+      setEdges((eds) =>
+        eds.map((edge) => ({
+          ...edge,
+          animated: false,
+          style: { stroke: '#888', strokeWidth: 1.5 },
+        }))
+      )
+      if (!isValidating) {
+        setInputString('')
+      }
+    },
+    [setNodes, setEdges]
+  )
 
   // Determine the character type
   const getCharType = useCallback((char: string) => {
@@ -190,7 +196,9 @@ export default function DFAVisualizer() {
             isActive: node.id === nextState,
             label:
               node.id === nextState
-                ? `${node.data.originalLabel} (Current)`
+                ? nextIndex === inputString.length - 1 && node.data.isAccepting
+                  ? `${node.data.originalLabel} (Final)`
+                  : `${node.data.originalLabel} (Current)`
                 : node.data.originalLabel,
           },
         }))
@@ -260,7 +268,7 @@ export default function DFAVisualizer() {
   const startValidation = useCallback(() => {
     if (inputString.length === 0) return
 
-    resetValidation()
+    resetValidation(true)
     setIsValidating(true)
     setIsPaused(false)
   }, [inputString, resetValidation])
@@ -308,145 +316,173 @@ export default function DFAVisualizer() {
     setEdges((els) => reconnectEdge(oldEdge, newConnection, els))
   const onConnect = (params: any) => setEdges((eds) => addEdge(params, eds))
 
+  // Trigger a fit view after a short delay to ensure proper rendering
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // This is just to trigger a re-render which helps with fitting the view
+      setNodes((nds) => [...nds])
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [setNodes])
+
   return (
-    <div className="w-full h-[calc(100vh-200px)] min-h-[600px]">
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Password Validator</CardTitle>
-          <CardDescription>
-            Enter an 8-character password to test against the NFA model.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="password">Password</Label>
-              <div className="flex space-x-2">
-                <Input
-                  id="password"
-                  value={inputString}
-                  onChange={(e) => setInputString(e.target.value)}
-                  placeholder="Enter an 8-character password"
-                  disabled={isValidating}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={startValidation}
-                  disabled={
-                    (isValidating && !isPaused) || inputString.length === 0
-                  }
-                >
-                  Validate
-                </Button>
-                {isValidating && (
-                  <Button variant="outline" onClick={togglePause}>
-                    {isPaused ? (
-                      <Play className="h-4 w-4" />
+    <div className="w-full min-h-[screen] flex flex-col md:flex-row gap-4 bg-background p-2">
+      {/* Password Validator - Full width on mobile, 1/4 width on desktop */}
+      <div className="w-full md:w-1/4 md:min-w-[300px]">
+        <div className="w-full p-2">
+          <Card className="shadow-sm">
+            <CardHeader className="p-4 pb-2">
+              <CardTitle>Password Validator</CardTitle>
+              <CardDescription>
+                Enter an 8-character password to test against the DFA model.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 pt-2">
+              <div className="flex flex-col space-y-4">
+                <div className="grid w-full items-center gap-1.5">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="flex flex-col space-y-2">
+                    <Input
+                      id="password"
+                      value={inputString}
+                      onChange={(e) => setInputString(e.target.value)}
+                      placeholder="Enter an 8-character password"
+                      disabled={isValidating}
+                    />
+                    <div className="flex space-x-2">
+                      <Button
+                        onClick={startValidation}
+                        disabled={
+                          (isValidating && !isPaused) ||
+                          inputString.length === 0
+                        }
+                        className="flex-1"
+                      >
+                        Validate
+                      </Button>
+                      {isValidating && (
+                        <Button variant="outline" onClick={togglePause}>
+                          {isPaused ? (
+                            <Play className="h-4 w-4" />
+                          ) : (
+                            <Pause className="h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        onClick={() => resetValidation(false)}
+                        disabled={!isValidating && currentIndex === -1}
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {isAccepted !== null && (
+                  <Alert variant={isAccepted ? 'default' : 'destructive'}>
+                    {isAccepted ? (
+                      <CheckCircle className="h-4 w-4" />
                     ) : (
-                      <Pause className="h-4 w-4" />
+                      <XCircle className="h-4 w-4" />
                     )}
-                  </Button>
+                    <AlertTitle>
+                      {isAccepted ? 'Password Accepted' : 'Password Rejected'}
+                    </AlertTitle>
+                    <AlertDescription>
+                      {isAccepted
+                        ? 'The password meets all requirements.'
+                        : 'The password does not meet the requirements.'}
+                    </AlertDescription>
+                  </Alert>
                 )}
-                <Button
-                  variant="outline"
-                  onClick={resetValidation}
-                  disabled={!isValidating && currentIndex === -1}
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            {isAccepted !== null && (
-              <Alert variant={isAccepted ? 'default' : 'destructive'}>
-                {isAccepted ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <XCircle className="h-4 w-4" />
+                {currentIndex >= 0 && (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="font-medium">Current State:</span>
+                      <Badge variant="outline">{currentState}</Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="font-medium">Path:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {visitedStates.map((state, idx) => (
+                          <Badge key={idx} variant="outline">
+                            {state}
+                            {idx < visitedStates.length - 1 && ' →'}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="font-medium">Input:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {inputString.split('').map((char, idx) => (
+                          <Badge
+                            key={idx}
+                            variant={
+                              idx <= currentIndex ? 'default' : 'outline'
+                            }
+                          >
+                            {char}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
-                <AlertTitle>
-                  {isAccepted ? 'Password Accepted' : 'Password Rejected'}
-                </AlertTitle>
-                <AlertDescription>
-                  {isAccepted
-                    ? 'The password meets all requirements.'
-                    : 'The password does not meet the requirements.'}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {currentIndex >= 0 && (
-              <div className="space-y-2">
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-medium">Current State:</span>
-                  <Badge variant="outline">{currentState}</Badge>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-medium">Path:</span>
-                  {visitedStates.map((state, idx) => (
-                    <Badge key={idx} variant="outline">
-                      {state}
-                      {idx < visitedStates.length - 1 && ' →'}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="font-medium">Input:</span>
-                  {inputString.split('').map((char, idx) => (
-                    <Badge
-                      key={idx}
-                      variant={idx <= currentIndex ? 'default' : 'outline'}
-                    >
-                      {char}
-                    </Badge>
-                  ))}
-                </div>
               </div>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <div className="text-sm text-muted-foreground">
-            Requirements: exactly 8 characters, at least one digit, one ore more
-            lowercase letter, and one or more uppercase letter.
-          </div>
-        </CardFooter>
-      </Card>
-
-      <ReactFlowProvider>
-        <div className="h-full border rounded-md bg-background">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onReconnect={onReconnect}
-            nodeTypes={nodeTypes}
-            fitView
-            minZoom={0.2}
-            maxZoom={4}
-          >
-            <Background />
-            <Controls />
-            <Panel position="top-right">
-              <div className="bg-background p-2 rounded-md shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm">q0 - Initial State</span>
-                </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                  <span className="text-sm">Final State</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
-                  <span className="text-sm">Current State</span>
-                </div>
+            </CardContent>
+            <CardFooter className="p-4 pt-2">
+              <div className="text-sm text-muted-foreground">
+                Requirements: exactly 8 characters, at least one digit, one or
+                more lowercase letter, and one or more uppercase letter.
               </div>
-            </Panel>
-          </ReactFlow>
+            </CardFooter>
+          </Card>
         </div>
-      </ReactFlowProvider>
+      </div>
+
+      {/* ReactFlow Visualization - Full width on mobile, 3/4 width on desktop */}
+      <div className="w-full md:flex-1 h-[550px] md:h-[calc(100vh-120px)] mt-2">
+        <ReactFlowProvider>
+          <div className="h-full border rounded-md bg-background overflow-hidden">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onReconnect={onReconnect}
+              nodeTypes={nodeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              minZoom={0.2}
+              maxZoom={4}
+              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+            >
+              <Background color="#aaa" gap={20} size={1} />
+              <Controls />
+              <Panel position="top-right">
+                <div className="bg-background p-3 rounded-md shadow-sm border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm">q0 - Initial State</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                    <span className="text-sm">Final State</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
+                    <span className="text-sm">Current State</span>
+                  </div>
+                </div>
+              </Panel>
+            </ReactFlow>
+          </div>
+        </ReactFlowProvider>
+      </div>
     </div>
   )
 }
